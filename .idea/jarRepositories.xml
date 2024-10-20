@@ -31,5 +31,10 @@
       <option name="name" value="MavenLocal" />
       <option name="url" value="file:/$MAVEN_REPOSITORY$/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="neoforged" />
+      <option name="name" value="neoforged" />
+      <option name="url" value="https://maven.neoforged.net/release" />
+    </remote-repository>
   </component>
 </project>
