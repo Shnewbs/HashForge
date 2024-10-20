@@ -5,10 +5,13 @@ import com.shnewbs.hashforge.items.ModItems;
 import com.shnewbs.hashforge.blockentity.ModBlockEntities;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(HashForgeMod.MODID)
 public class HashForgeMod {
     public static final String MODID = "hashforge";
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public HashForgeMod(IEventBus modEventBus) {
         ModBlocks.register(modEventBus);
