@@ -1,1 +1,12 @@
 /give @a hashforge:asic_miner
+/wallet
+/balance
+/wallet
+/balance
+/wallethash
+/wallet
+/wallet balance
+/wallet balance forgecoin
+/wallet balance hashforge
+/wallet address hashforge
+/wallet send hashforge coin1 dev 100

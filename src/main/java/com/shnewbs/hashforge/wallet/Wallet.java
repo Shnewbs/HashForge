@@ -1,53 +1,83 @@
 package com.shnewbs.hashforge.wallet;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Wallet {
-    private UUID walletID;
-    private double balance;
-    private KeyPair keyPair; // Private and public keys for digital signature
+    private final UUID playerUUID;
+    private final ConcurrentHashMap<String, Double> balances = new ConcurrentHashMap<>();
+    private final List<PendingReward> pendingRewards = new ArrayList<>();
+    private final ReadWriteLock rewardsLock = new ReentrantReadWriteLock();
 
-    public Wallet() {
-        this.walletID = UUID.randomUUID(); // Generate a unique ID for the wallet
-        this.balance = 0.0; // Start with zero balance
-        this.keyPair = generateKeyPair(); // Generate key pair for the wallet
+    public Wallet(UUID playerUUID) {
+        this.playerUUID = playerUUID;
     }
 
-    // Generate public/private key pair for digital signature
-    private KeyPair generateKeyPair() {
+    public double getBalance(String coinType) {
+        return balances.getOrDefault(coinType, 0.0);
+    }
+
+    public void addBalance(String coinType, double amount) {
+        balances.compute(coinType, (k, v) -> (v == null ? 0 : v) + amount);
+    }
+
+    public boolean subtractBalance(String coinType, double amount, String transactionId) {
+        return balances.computeIfPresent(coinType, (k, v) -> {
+            if (v >= amount) {
+                return v - amount;
+            }
+            return v;
+        }) != null;
+    }
+
+    public void addPendingReward(String coinType, double amount, String transactionId) {
+        rewardsLock.writeLock().lock();
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048); // 2048-bit key length for security
-            return keyGen.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            pendingRewards.add(new PendingReward(coinType, amount, transactionId));
+        } finally {
+            rewardsLock.writeLock().unlock();
         }
     }
 
-    public UUID getWalletID() {
-        return walletID;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void addCoins(double amount) {
-        this.balance += amount;
-    }
-
-    public boolean removeCoins(double amount) {
-        if (amount <= balance) {
-            this.balance -= amount;
-            return true;
+    public List<PendingReward> getPendingRewards() {
+        rewardsLock.readLock().lock();
+        try {
+            return new ArrayList<>(pendingRewards);
+        } finally {
+            rewardsLock.readLock().unlock();
         }
-        return false;
     }
 
-    public KeyPair getKeyPair() {
-        return keyPair;
+    public void clearPendingRewards() {
+        rewardsLock.writeLock().lock();
+        try {
+            pendingRewards.clear();
+        } finally {
+            rewardsLock.writeLock().unlock();
+        }
     }
+
+    public UUID getPlayerUUID() {
+        return playerUUID;
+    }
+}
+
+class PendingReward {
+    private final String coinType;
+    private final double amount;
+    private final String transactionId;
+
+    public PendingReward(String coinType, double amount, String transactionId) {
+        this.coinType = coinType;
+        this.amount = amount;
+        this.transactionId = transactionId;
+    }
+
+    public String getCoinType() { return coinType; }
+    public double getAmount() { return amount; }
+    public String getTransactionId() { return transactionId; }
 }
