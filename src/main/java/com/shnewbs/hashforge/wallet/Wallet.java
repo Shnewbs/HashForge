@@ -6,10 +6,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.ArrayList;
 import java.util.List;
+import com.shnewbs.hashforge.currency.CurrencyType;
 
 public class Wallet {
     private final UUID playerUUID;
-    private final ConcurrentHashMap<String, Double> balances = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<CurrencyType, Double> balances = new ConcurrentHashMap<>();
     private final List<PendingReward> pendingRewards = new ArrayList<>();
     private final ReadWriteLock rewardsLock = new ReentrantReadWriteLock();
 
@@ -17,27 +18,18 @@ public class Wallet {
         this.playerUUID = playerUUID;
     }
 
-    public double getBalance(String coinType) {
-        return balances.getOrDefault(coinType, 0.0);
+    public double getBalance(CurrencyType currencyType) {
+        return balances.getOrDefault(currencyType, 0.0);
     }
 
-    public void addBalance(String coinType, double amount) {
-        balances.compute(coinType, (k, v) -> (v == null ? 0 : v) + amount);
+    public void addBalance(CurrencyType currencyType, double amount) {
+        balances.compute(currencyType, (k, v) -> (v == null ? 0 : v) + amount);
     }
 
-    public boolean subtractBalance(String coinType, double amount, String transactionId) {
-        return balances.computeIfPresent(coinType, (k, v) -> {
-            if (v >= amount) {
-                return v - amount;
-            }
-            return v;
-        }) != null;
-    }
-
-    public void addPendingReward(String coinType, double amount, String transactionId) {
+    public void addPendingReward(CurrencyType currencyType, double amount, String transactionId) {
         rewardsLock.writeLock().lock();
         try {
-            pendingRewards.add(new PendingReward(coinType, amount, transactionId));
+            pendingRewards.add(new PendingReward(currencyType, amount, transactionId));
         } finally {
             rewardsLock.writeLock().unlock();
         }
@@ -67,17 +59,17 @@ public class Wallet {
 }
 
 class PendingReward {
-    private final String coinType;
+    private final CurrencyType currencyType;
     private final double amount;
     private final String transactionId;
 
-    public PendingReward(String coinType, double amount, String transactionId) {
-        this.coinType = coinType;
+    public PendingReward(CurrencyType currencyType, double amount, String transactionId) {
+        this.currencyType = currencyType;
         this.amount = amount;
         this.transactionId = transactionId;
     }
 
-    public String getCoinType() { return coinType; }
+    public CurrencyType getCurrencyType() { return currencyType; }
     public double getAmount() { return amount; }
     public String getTransactionId() { return transactionId; }
 }

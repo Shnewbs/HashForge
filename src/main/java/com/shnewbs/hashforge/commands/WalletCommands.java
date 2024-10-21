@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
-import java.util.Map;
 
 public class WalletCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -65,11 +64,8 @@ public class WalletCommands {
         try {
             Wallet wallet = HashForgeMod.walletManager.getWallet(player.getUUID());
             if (wallet != null) {
-                Map<String, Double> balances = wallet.getAllBalances(currencyType);
-                player.sendSystemMessage(Component.literal("Your " + currencyType.name() + " balances:"));
-                for (Map.Entry<String, Double> entry : balances.entrySet()) {
-                    player.sendSystemMessage(Component.literal(entry.getKey() + ": " + entry.getValue()));
-                }
+                double balance = wallet.getBalance(currencyType);
+                player.sendSystemMessage(Component.literal("Your " + currencyType.name() + " balance: " + balance));
             } else {
                 player.sendSystemMessage(Component.literal("You don't have a wallet yet."));
             }
@@ -81,7 +77,7 @@ public class WalletCommands {
 
     private static int sendCurrency(ServerPlayer sender, ServerPlayer recipient, double amount, CurrencyType currencyType, String coin) {
         try {
-            boolean success = HashForgeMod.walletManager.transferFunds(sender.getUUID(), recipient.getUUID(), currencyType, coin, amount);
+            boolean success = HashForgeMod.walletManager.transferFunds(sender.getUUID(), recipient.getUUID(), currencyType.name(), amount);
             if (success) {
                 sender.sendSystemMessage(Component.literal("Successfully sent " + amount + " " + coin + " (" + currencyType.name() + ") to " + recipient.getName().getString()));
                 recipient.sendSystemMessage(Component.literal("Received " + amount + " " + coin + " (" + currencyType.name() + ") from " + sender.getName().getString()));
