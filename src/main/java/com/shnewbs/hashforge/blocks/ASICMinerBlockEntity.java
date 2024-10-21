@@ -1,87 +1,56 @@
 package com.shnewbs.hashforge.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.energy.EnergyStorage;
-import com.shnewbs.hashforge.HashForgeMod;
-
-import java.util.UUID;
 
 public class ASICMinerBlockEntity extends BlockEntity {
     private final EnergyStorage energyStorage;
-    private UUID ownerUUID;
     private String currentCoin;
     private double hashRate;
-    private double efficiency;
-    private double heatOutput;
     private boolean isPowered;
-    private int energyConsumption;
 
-    public ASICMinerBlockEntity(BlockPos pos, BlockState state) {
-        super(HashForgeMod.ASIC_MINER_BLOCK_ENTITY.get(), pos, state);
+    // Updated constructor with BlockEntityType parameter
+    public ASICMinerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         this.energyStorage = new EnergyStorage(100000);
         this.currentCoin = "";
         this.hashRate = 0;
-        this.efficiency = 100;
-        this.heatOutput = 0;
         this.isPowered = false;
-        this.energyConsumption = 0;
     }
 
-    public String getCurrentCoin() {
-        return currentCoin;
+    @Override
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putString("currentCoin", this.currentCoin);
+        tag.putDouble("hashRate", this.hashRate);
+        tag.putBoolean("isPowered", this.isPowered);
     }
 
-    public double getHashRate() {
-        return hashRate;
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        this.currentCoin = tag.getString("currentCoin");
+        this.hashRate = tag.getDouble("hashRate");
+        this.isPowered = tag.getBoolean("isPowered");
     }
 
-    public boolean isPowered() {
-        return isPowered;
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return ClientboundBlockEntityDataPacket.create(this, (blockEntity) -> tag);
     }
 
-    public int getEnergyConsumption() {
-        return energyConsumption;
-    }
-
-    public double getEfficiency() {
-        return efficiency;
-    }
-
-    public double getHeatOutput() {
-        return heatOutput;
-    }
-
-    public void setCurrentCoin(String coin) {
-        this.currentCoin = coin;
-        setChanged();
-    }
-
-    public void setHashRate(double hashRate) {
-        this.hashRate = hashRate;
-        setChanged();
-    }
-
-    public void setPowered(boolean powered) {
-        this.isPowered = powered;
-        setChanged();
-    }
-
-    public void setEnergyConsumption(int consumption) {
-        this.energyConsumption = consumption;
-        setChanged();
-    }
-
-    public void setEfficiency(double efficiency) {
-        this.efficiency = efficiency;
-        setChanged();
-    }
-
-    public void setHeatOutput(double heatOutput) {
-        this.heatOutput = heatOutput;
-        setChanged();
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
     }
 
     public void tick() {
@@ -93,9 +62,6 @@ public class ASICMinerBlockEntity extends BlockEntity {
     }
 
     private void performMining() {
-        // Implement mining logic here
-        // This should update hashRate, energyConsumption, heatOutput, etc.
+        // Mining logic goes here
     }
-
-    // Implement other necessary methods
 }

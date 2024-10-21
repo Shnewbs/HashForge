@@ -9,8 +9,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import com.shnewbs.hashforge.HashForgeMod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PlayerJoinEventHandler {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -33,9 +37,8 @@ public class PlayerJoinEventHandler {
                     serverPlayer.sendSystemMessage(Component.literal("Welcome back! Your existing wallet has been loaded."));
                 }
             } catch (Exception e) {
-                // Log the error (you should implement proper logging in your mod)
-                System.err.println("Error creating wallet for player " + playerUUID + ": " + e.getMessage());
-                e.printStackTrace();
+                // Log the error
+                LOGGER.error("Error creating wallet for player " + playerUUID, e);
 
                 // Notify the player
                 serverPlayer.sendSystemMessage(Component.literal("An error occurred while managing your wallet. Please contact an administrator."));

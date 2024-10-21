@@ -10,3 +10,12 @@
 /wallet balance hashforge
 /wallet address hashforge
 /wallet send hashforge coin1 dev 100
+/hf wallet asic list
+/hf asic list
+/hf wallet
+/wallet
+/help
+/op dev
+/hf wallet
+/hf asic
+/hf wallet

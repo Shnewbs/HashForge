@@ -8,19 +8,25 @@ import com.shnewbs.hashforge.mining.MiningManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.commands.Commands;  // Ensure this import is present
+import net.minecraft.server.MinecraftServer; // To access the server and dispatcher
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(HashForgeMod.MOD_ID)
 public class HashForgeMod {
     public static final String MOD_ID = "hashforge";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
@@ -47,9 +53,22 @@ public class HashForgeMod {
 
         walletManager = new WalletManager();
         miningManager = new MiningManager();
-
-        // Register other event listeners and initialize other components here
     }
 
-    // Add other necessary methods and event handlers
+    @SubscribeEvent
+    public static void onServerStarting(ServerStartingEvent event) {
+        LOGGER.info("Server is starting, attempting to register commands...");
+
+        try {
+            MinecraftServer server = event.getServer();
+            server.getCommands().getDispatcher().register(
+                    Commands.literal("hf")
+                            .then(WalletCommands.getWalletCommand())
+                            .then(WalletCommands.getAsicCommand())
+            );
+            LOGGER.info("hf commands registered successfully.");
+        } catch (Exception e) {
+            LOGGER.error("Error registering commands: ", e);
+        }
+    }
 }
