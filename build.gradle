@@ -70,6 +70,15 @@ neoForge {
         }
     }
 }
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '--enable-preview'
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+}
+
+tasks.withType(Test) {
+    jvmArgs '--enable-preview'
+}
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 

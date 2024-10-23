@@ -1,25 +1,29 @@
 package com.shnewbs.hashforge.wallet;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 public class WalletManager {
-
-    private final Map<String, Wallet> wallets = new ConcurrentHashMap<>();
-
-    public WalletManager() {
-        // Initialization logic here
+    public boolean hasWallet(String playerUUID) {
+        // Implement logic
+        return true; // Placeholder
     }
 
-    public void loadWallets() {
-        // Load wallets from storage
+    public void createWallet(String playerUUID) {
+        // Implement logic
     }
 
-    public Wallet getWallet(String playerUUID) {
-        return wallets.get(playerUUID);
+    public double getBalance(String playerUUID, String currency) {
+        // Implement logic
+        return 0.0; // Placeholder
     }
 
-    public void addWallet(String playerUUID, Wallet wallet) {
-        wallets.put(playerUUID, wallet);
+    public boolean transfer(String senderUUID, String targetUUID, String currency, double amount) {
+        // Implement logic
+        return true; // Placeholder
+    }
+
+    public List<?> getPendingRewards(String playerUUID) {
+        // Implement logic
+        return List.of(); // Placeholder
     }
 }

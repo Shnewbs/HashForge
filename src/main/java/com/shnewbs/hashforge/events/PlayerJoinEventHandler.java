@@ -1,16 +1,12 @@
-package com.shnewbs.hashforge.event;
+package com.shnewbs.hashforge.events;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.lifecycle.player.PlayerLoginEvent;
 
 public class PlayerJoinEventHandler {
 
     @SubscribeEvent
-    public void onPlayerJoin(PlayerLoginEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            player.sendSystemMessage(Component.literal("Welcome to the server!"));
-        }
+    public void onPlayerJoin(PlayerLoggedInEvent event) {
+        // Your logic for handling player join events
     }
 }

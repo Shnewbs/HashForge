@@ -12,10 +12,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-
-CompoundTag tag = stack.getOrCreateTag();
-
 public class CoinCreatorItem extends Item {
+
+
+    CompoundTag tag = stack.getOrCreateTag();
 
     public CoinCreatorItem(Properties properties) {
         super(properties);
