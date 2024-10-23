@@ -3,22 +3,21 @@ package com.shnewbs.hashforge.datagen;
 import com.shnewbs.hashforge.HashForgeMod;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Item;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.PackOutput;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import java.util.concurrent.CompletableFuture;
 
 public class CoinTagProvider extends TagsProvider<Item> {
-
-    public CoinTagProvider(PackOutput output, CompletableFuture<TagLookup<Item>> lookupProvider) {
-        super(output, Registries.ITEM, lookupProvider, HashForgeMod.MOD_ID, null);
+    public CoinTagProvider(DataGenerator generator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(generator, Registries.ITEM, lookupProvider, "hashforge", null);
     }
 
     @Override
-    protected void addTags() {
-        TagKey<Item> coinTag = TagKey.create(Registries.ITEM, ResourceLocation.of("hashforge", "coins"));
-        tag(coinTag).add(HashForgeMod.getItems().get("coin_creator"));
+    protected void addTags(HolderLookup.Provider provider) {
+        tag(TagKey.create(Registries.ITEM, new ResourceLocation("hashforge", "coins"))).add(Items.GOLD_INGOT, Items.IRON_INGOT);
     }
 }
