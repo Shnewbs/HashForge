@@ -19,3 +19,12 @@
 /hf wallet
 /hf asic
 /hf wallet
+/give @a hashforge:asic_miner
+/hf wallet
+/wallet
+/hf wallet
+/hf asic list
+//hf asic list
+/hf wallet
+/hf asic
+/hf asic list

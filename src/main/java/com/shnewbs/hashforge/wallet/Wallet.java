@@ -1,6 +1,6 @@
 package com.shnewbs.hashforge.wallet;
 
-import com.shnewbs.hashforge.CurrencyType; // Ensure correct import
+import com.shnewbs.hashforge.currency.CurrencyType; // Ensure correct import
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
