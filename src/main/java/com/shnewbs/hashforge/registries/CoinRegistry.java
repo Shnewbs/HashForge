@@ -1,4 +1,6 @@
-package com.shnewbs.hashforge.currency;
+package com.shnewbs.hashforge.registries;
+
+import com.shnewbs.hashforge.currency.CurrencyType;
 
 import java.util.Map;
 import java.util.Optional;
